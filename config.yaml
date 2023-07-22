@@ -1,0 +1,7 @@
+kubeConfig: /Users/zhenyu.jiang/.kube/config    # k8s config目录
+filterEventLevel:                            # 过滤的事件等级
+# 通知模式：目前支持结构化日志、对接prometheus、发送email消息
+mode:
+  log: true
+  prometheus: true
+  message: true
