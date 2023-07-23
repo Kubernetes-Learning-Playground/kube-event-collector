@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"fmt"
 	"github.com/practice/kube-event/pkg/components/logCollector"
 	"github.com/practice/kube-event/pkg/components/prometheusCollector"
+	"github.com/practice/kube-event/pkg/components/sender"
 	"github.com/practice/kube-event/pkg/config"
 	"github.com/practice/kube-event/pkg/model"
+	"k8s.io/klog/v2"
 	"time"
 
 	v1 "k8s.io/api/events/v1"
@@ -25,11 +26,13 @@ type EventWorker struct {
 	// clientSet k8s客户端
 	clientSet kubernetes.Interface
 	// factory informer factory对象
-	factory           informers.SharedInformerFactory
+	factory informers.SharedInformerFactory
 	// prometheusCollect prometheus收集器
 	prometheusCollect *prometheusCollector.PrometheusCollector
 	// logCollect 日志收集器
-	logCollect        *logCollector.StructLogger
+	logCollect *logCollector.StructLogger
+
+	sendCollect *sender.Sender
 }
 
 func NewWorker(stopCh <-chan struct{}, cfg *config.Config) *EventWorker {
@@ -39,6 +42,7 @@ func NewWorker(stopCh <-chan struct{}, cfg *config.Config) *EventWorker {
 		config:            cfg,
 		prometheusCollect: prometheusCollector.MetricsCollector,
 		logCollect:        logCollector.Logger,
+		sendCollect:       sender.NewSender(cfg),
 	}
 	return w
 }
@@ -86,7 +90,7 @@ func (w *EventWorker) Run() {
 func (w *EventWorker) eventAddHandle(obj interface{}) {
 	// watch add-event, and update events ---> Worker events
 	event := obj.(*v1.Event)
-	fmt.Println(event.Kind, event.Type, event.Reason)
+	klog.Infof("event: %s, type: , reason: %s", event.Name, event.Type, event.Reason)
 	var eventTmp model.Event
 	eventTmp.Type = event.Type
 	eventTmp.Kind = event.Regarding.Kind
@@ -98,6 +102,7 @@ func (w *EventWorker) eventAddHandle(obj interface{}) {
 	eventTmp.Reason = event.Reason
 	eventTmp.Source = event.DeprecatedSource.Component
 	eventTmp.Timestamp = event.DeprecatedLastTimestamp.Time
+
 	// TODO: 这里可以做过滤操作
 	w.Events <- &eventTmp
 
@@ -111,6 +116,7 @@ func (w *EventWorker) Do() {
 			// 从chan 获取event对象，并执行操作
 			w.logCollect.EventLog(e)
 			w.prometheusCollect.Collecting(e)
+			w.sendCollect.Send(e)
 		case <-w.stopCh:
 			return
 		}

@@ -7,8 +7,26 @@ import (
 	"log"
 )
 
+// Config 配置文件
 type Config struct {
-	KubeConfig string `json:"kubeConfig" yaml:"kubeConfig"`
+	KubeConfig  string `json:"kubeConfig" yaml:"kubeConfig"`
+	FilterLevel string `json:"filterEventLevel" yaml:"filterEventLevel"`
+	Mode
+	Sender `json:"sender" yaml:"sender"`
+}
+
+type Mode struct {
+	Log        bool `json:"log" yaml:"log"`
+	Prometheus bool `json:"prometheus", yaml:"prometheus"`
+	Message    bool `json:"message" yaml:"message"`
+}
+
+type Sender struct {
+	Remote   string `yaml:"remote"`
+	Port     int    `yaml:"port"`
+	Email    string `yaml:"email"`
+	Password string `yaml:"password"`
+	Targets  string `yaml:"targets"`
 }
 
 func NewConfig() *Config {

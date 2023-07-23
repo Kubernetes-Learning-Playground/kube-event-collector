@@ -2,6 +2,7 @@ package model
 
 import "time"
 
+// Event 事件对象
 type Event struct {
 	Type      string
 	Kind      string

@@ -9,8 +9,10 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 )
 
+// EventWorker 处理事件对象
 type EventWorker struct {
-	config string
+	config     string
+	serverPort string
 }
 
 func NewEventWorker() *EventWorker {
@@ -23,26 +25,34 @@ func (e *EventWorker) AddFlags(cmd *cobra.Command) {
 	configFlags.AddFlags(cmd.PersistentFlags())
 
 	flags := cmd.Flags()
-	flags.StringVar(&e.config, "config", "./config.yaml", "config ")
+	flags.StringVar(&e.config, "config", "./config.yaml", "config")
+	flags.StringVar(&e.serverPort, "port", "8080", "server port ")
 
 }
 
 func (e *EventWorker) Execute() error {
+	// 配置文件
 	c, err := config.LoadConfig(e.config)
 	if err != nil {
 		return err
 	}
 
 	stopC := signal.SetupSignalHandler()
-	w := controller.NewWorker(stopC, c)
-	err = w.Prepare()
+	worker := controller.NewWorker(stopC, c)
+
+	// 1. worker 初始化操作
+	err = worker.Prepare()
 	if err != nil {
 		return err
 	}
-	w.Run()
-	go w.Do()
+
+	// 2. 启动worker中的informer
+	worker.Run()
+
+	// 3. 不断轮巡，进行collector操作
+	go worker.Do()
 
 	// 启动http server，主要给prometheus调用接口
-	server.HttpServer()
+	server.HttpServer(e.serverPort)
 	return nil
 }

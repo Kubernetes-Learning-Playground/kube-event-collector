@@ -22,15 +22,14 @@ func init() {
 
 	Logger.SetFormatter(&logrus.JSONFormatter{}) // 设置 format json
 	// Output to stdout instead of the default stderr
-	logfile, _ := os.OpenFile("./logrus.mylog", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
+	logfile, _ := os.OpenFile("./eventlog.logCollector", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0644)
 	Logger.SetOutput(logfile)
 	//Logger.SetOutput(os.Stdout)
 }
 
 func (sl *StructLogger) EventLog(event *model.Event) {
 	sl.Logger.WithFields(logrus.Fields{
-		//"namespace":      namespace,
-		"pod":         event.Name,
+		"name":        event.Name,
 		"reason":      event.Reason,
 		"message":     event.Message,
 		"host":        event.Host,

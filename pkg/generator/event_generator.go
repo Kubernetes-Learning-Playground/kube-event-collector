@@ -32,7 +32,7 @@ type EventGenerator struct {
 }
 
 const (
-	defaultNamespace = "kube-system"
+	defaultNamespace = "default"
 	defaultEventType = v1.EventTypeWarning
 )
 
@@ -50,7 +50,7 @@ func (g *EventGenerator) AddFlags(cmd *cobra.Command) {
 	flags := cmd.Flags()
 	flags.StringVar(&g.kubeConfig, "kubeconfig", "/Users/zhenyu.jiang/.kube/config", "kube config file")
 	flags.StringVar(&g.kind, "kind", "pods", "Resource kind to get.")
-	flags.StringVar(&g.name, "name", "kube-scheduler-minikube", "Resource name to get.")
+	flags.StringVar(&g.name, "name", "test-pods", "Resource name to get.")
 	flags.StringVar(&g.namespace, "namespace", defaultNamespace, "Resource namespace to get.")
 	flags.StringVar(&g.eventType, "type", defaultEventType, "Event type.")
 	flags.StringVar(&g.eventAction, "action", "ttt", "Event action.")
@@ -58,7 +58,7 @@ func (g *EventGenerator) AddFlags(cmd *cobra.Command) {
 	flags.StringVar(&g.eventMessage, "message", "Testing-Message", "Event message.")
 }
 
-// Run generates event.
+// Run 执行生成事件
 func (g *EventGenerator) Run() error {
 	r := resource.NewBuilder(g.restClientGetter).
 		Unstructured().
@@ -93,6 +93,7 @@ func (g *EventGenerator) Run() error {
 	}
 
 	now := time.Now()
+	// 使用客户端创建模拟事件
 	event, err := client.CoreV1().Events("").CreateWithEventNamespace(&v1.Event{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      fmt.Sprintf("%v.%x", g.name, now.UnixNano()),
@@ -113,5 +114,5 @@ func (g *EventGenerator) Run() error {
 	if err == nil {
 		klog.Infof("Event generated successfully: %v", event)
 	}
-	return  nil
+	return nil
 }

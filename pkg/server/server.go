@@ -6,13 +6,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func HttpServer() {
+func HttpServer(port string) {
 
 	r := gin.New()
 	// 提供给prometheus的接口
 	r.GET("/metrics", PrometheusHandler())
 
-	err := r.Run(fmt.Sprintf(":%v", "8080"))
+	err := r.Run(fmt.Sprintf(":%v", port))
 	fmt.Println(err)
 }
 
