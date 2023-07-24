@@ -1,5 +1,5 @@
 ## kube-event-collector 集群内事件收集器
-![]()
+![](https://github.com/Kubernetes-Learning-Playground/kube-event-collector/blob/main/image/%E6%B5%81%E7%A8%8B%E5%9B%BE%20(1).jpg?raw=true)
 ### 项目思路与设计
 设计背景：
 在集群中k8s的event事件是通知资源对象的，用于记录系统的某些状态变化。使用自定义控制器的方式，监听
