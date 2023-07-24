@@ -52,11 +52,24 @@ Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-
 ```
 
 ### event generator
+需要在启动时指定必要参数，如果指定不正确，会报错
+- kubeconfig kube config配置文件
+- kind 触发事件的资源对象，ex: pods deployments
+- name 事件名称
+- namespace 
+- type 事件程度：ex: Normal Warning等
+- action 动作
+- reason 事件根因 
+- message 事件消息
 
 1. 进入项目根目录
 ```bash
 ➜  kube-event-collector git:(main) ✗ go run main.go kube-event-generator --kubeconfig ~/.kube/config --kind pods --name kube-controller-manager-minikube --namespace kube-system
 I0723 13:48:05.948372   32767 event_generator.go:115] Event generated successfully: 
 &Event{ObjectMeta:{kube-controller-manager-minikube.17746911f0928000  kube-system  273659a2-efa3-484d-9404-0524cd869dee 2078909 0 2023-07-23 13:48:05 +0800 CST <nil> <nil> map[] map[] [] [] [{main Update v1 2023-07-23 13:48:05 +0800 CST FieldsV1 {"f:action":{},"f:eventTime":{},"f:firstTimestamp":{},"f:involvedObject":{},"f:lastTimestamp":{},"f:message":{},"f:reason":{},"f:reportingComponent":{},"f:reportingInstance":{},"f:type":{}} }]},InvolvedObject:ObjectReference{Kind:Pod,Namespace:kube-system,Name:kube-controller-manager-minikube,UID:5fdee821-fbb9-4933-8e25-5f34a0a42357,APIVersion:v1,ResourceVersion:2059197,FieldPath:,},Reason:Testing-Reason,Message:Testing-Message,Source:EventSource{Component:,Host:,},FirstTimestamp:2023-07-23 13:48:05 +0800 CST,LastTimestamp:2023-07-23 13:48:05 +0800 CST,Count:0,Type:Warning,EventTime:2023-07-23 13:48:05.942272 +0800 CST,Series:nil,Action:ttt,Related:nil,ReportingController:k8s-event-generator,ReportingInstance:k8s-event-generator,}
-
+# 获取事件资源
+➜  kube-event-collector git:(main) ✗ kubectl get event -A
+NAMESPACE     LAST SEEN   TYPE      REASON               OBJECT                        MESSAGE
+kube-system   6m9s        Warning   Testing-Reason       pod/kube-scheduler-minikube   Testing-Message
+kube-system   5m7s        Warning   Testing-Reasonaaaa   pod/kube-scheduler-minikube   Testing-Message
 ```
