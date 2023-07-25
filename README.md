@@ -30,9 +30,9 @@ mode:
 sender:
   remote: smtp.qq.com
   port:  25
-  email: 2539512760@qq.com
-  password: cswkxalurhtwecge
-  targets: 3467320690@qq.com
+  email: <email>
+  password: <password>
+  targets: <targets>
 ```
 
 ### 项目测试
