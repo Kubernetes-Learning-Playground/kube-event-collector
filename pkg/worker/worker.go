@@ -25,7 +25,7 @@ func (e *EventWorker) AddFlags(cmd *cobra.Command) {
 	configFlags.AddFlags(cmd.PersistentFlags())
 
 	flags := cmd.Flags()
-	flags.StringVar(&e.config, "config", "./config.yaml", "config")
+	flags.StringVar(&e.config, "config1", "./config1.yaml", "config1")
 	flags.StringVar(&e.serverPort, "port", "8080", "server port ")
 
 }

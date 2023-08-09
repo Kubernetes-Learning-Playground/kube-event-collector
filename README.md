@@ -21,7 +21,7 @@
 
 #### 配置文件
 ```yaml
-kubeConfig: /Users/zhenyu.jiang/.kube/config    # k8s config目录，如果使用容器化部署，需要挂载kube config
+kubeConfig: /Users/zhenyu.jiang/.kube/config1    # k8s config目录，如果使用容器化部署，需要挂载kube config1
 filterEventLevel:                               # 过滤的事件等级
 elasticSearchEndpoint: http://127.0.0.1:9200    # es服务器endpoint
 # 通知模式：目前支持结构化日志、对接prometheus、发送email消息
@@ -42,7 +42,7 @@ sender:
 ### event worker 
 1. 进入项目根目录(--config <配置文件目录>)
 ```bash
-➜  kube-event-collector git:(main) ✗ go run main.go kube-event-worker --config ./config.yaml
+➜  kube-event-collector git:(main) ✗ go run main.go kube-event-worker --config1 ./config1.yaml
 [GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
 - using env:   export GIN_MODE=release
 - using code:  gin.SetMode(gin.ReleaseMode)
@@ -67,7 +67,7 @@ Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-
 
 1. 进入项目根目录
 ```bash
-➜  kube-event-collector git:(main) ✗ go run main.go kube-event-generator --kubeconfig ~/.kube/config --kind pods --name kube-controller-manager-minikube --namespace kube-system
+➜  kube-event-collector git:(main) ✗ go run main.go kube-event-generator --kubeconfig ~/.kube/config1 --kind pods --name kube-controller-manager-minikube --namespace kube-system
 I0723 13:48:05.948372   32767 event_generator.go:115] Event generated successfully: 
 &Event{ObjectMeta:{kube-controller-manager-minikube.17746911f0928000  kube-system  273659a2-efa3-484d-9404-0524cd869dee 2078909 0 2023-07-23 13:48:05 +0800 CST <nil> <nil> map[] map[] [] [] [{main Update v1 2023-07-23 13:48:05 +0800 CST FieldsV1 {"f:action":{},"f:eventTime":{},"f:firstTimestamp":{},"f:involvedObject":{},"f:lastTimestamp":{},"f:message":{},"f:reason":{},"f:reportingComponent":{},"f:reportingInstance":{},"f:type":{}} }]},InvolvedObject:ObjectReference{Kind:Pod,Namespace:kube-system,Name:kube-controller-manager-minikube,UID:5fdee821-fbb9-4933-8e25-5f34a0a42357,APIVersion:v1,ResourceVersion:2059197,FieldPath:,},Reason:Testing-Reason,Message:Testing-Message,Source:EventSource{Component:,Host:,},FirstTimestamp:2023-07-23 13:48:05 +0800 CST,LastTimestamp:2023-07-23 13:48:05 +0800 CST,Count:0,Type:Warning,EventTime:2023-07-23 13:48:05.942272 +0800 CST,Series:nil,Action:ttt,Related:nil,ReportingController:k8s-event-generator,ReportingInstance:k8s-event-generator,}
 # 获取事件资源
