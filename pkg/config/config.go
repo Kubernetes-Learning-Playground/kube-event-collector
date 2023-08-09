@@ -54,7 +54,7 @@ func LoadConfig(path string) (*Config, error) {
 		}
 		return config, err
 	} else {
-		return nil, fmt.Errorf("load config1 file error...")
+		return nil, fmt.Errorf("load config file error...")
 	}
 
 }

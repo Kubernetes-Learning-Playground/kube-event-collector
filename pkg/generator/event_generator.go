@@ -48,7 +48,7 @@ func (g *EventGenerator) AddFlags(cmd *cobra.Command) {
 	g.restClientGetter = configFlags
 
 	flags := cmd.Flags()
-	flags.StringVar(&g.kubeConfig, "kubeconfig", "/Users/zhenyu.jiang/.kube/config1", "kube config1 file")
+	flags.StringVar(&g.kubeConfig, "kubeconfig", "/Users/zhenyu.jiang/.kube/config", "kube config file")
 	flags.StringVar(&g.kind, "kind", "pods", "Resource kind to get.")
 	flags.StringVar(&g.name, "name", "test-pods", "Resource name to get.")
 	flags.StringVar(&g.namespace, "namespace", defaultNamespace, "Resource namespace to get.")
