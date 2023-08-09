@@ -13,7 +13,8 @@
 - 过滤特定event类型事件 (TODO)
 - 记录event metrics，给后端prometheus
 - 记录log结构化日志，给后端loki使用
-- 下发qq邮箱 (TODO)
+- 下发qq邮箱
+- 下发给elasticSearch
 
 #### event-generator
 - 模拟创建event事件
@@ -22,11 +23,13 @@
 ```yaml
 kubeConfig: /Users/zhenyu.jiang/.kube/config    # k8s config目录，如果使用容器化部署，需要挂载kube config
 filterEventLevel:                               # 过滤的事件等级
+elasticSearchEndpoint: http://127.0.0.1:9200    # es服务器endpoint
 # 通知模式：目前支持结构化日志、对接prometheus、发送email消息
 mode:
   log: true
   prometheus: true
   message: true
+  elasticSearch: true  
 sender:
   remote: smtp.qq.com
   port:  25
