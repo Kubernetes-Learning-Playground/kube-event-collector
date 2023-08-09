@@ -3,6 +3,7 @@ module github.com/practice/kube-event
 go 1.20
 
 require (
+	github.com/elastic/go-elasticsearch/v8 v8.9.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/prometheus/client_golang v1.16.0
@@ -22,6 +23,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/elastic/elastic-transport-go/v8 v8.0.0-20230329154755-1a3c63de0db6 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect

@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/practice/kube-event/pkg/components/elasticsearchCollector"
 	"github.com/practice/kube-event/pkg/components/logCollector"
 	"github.com/practice/kube-event/pkg/components/prometheusCollector"
 	"github.com/practice/kube-event/pkg/components/sender"
@@ -31,7 +32,9 @@ type EventWorker struct {
 	prometheusCollect *prometheusCollector.PrometheusCollector
 	// logCollect 日志收集器
 	logCollect *logCollector.StructLogger
-
+	// elasticSearchCollect elastic收集器
+	elasticSearchCollect *elasticsearchCollector.ElasticSearchCollector
+	// sendCollect 信息发送器
 	sendCollect *sender.Sender
 }
 
@@ -43,6 +46,7 @@ func NewWorker(stopCh <-chan struct{}, cfg *config.Config) *EventWorker {
 		prometheusCollect: prometheusCollector.MetricsCollector,
 		logCollect:        logCollector.Logger,
 		sendCollect:       sender.NewSender(cfg),
+		elasticSearchCollect: elasticsearchCollector.NewElasticSearchCollector(cfg),
 	}
 	return w
 }
@@ -53,10 +57,12 @@ func (w *EventWorker) initClient() error {
 	if err != nil {
 		return err
 	}
+	cfg.Insecure = true
 	clientSet, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
 		return err
 	}
+
 	w.clientSet = clientSet
 	return nil
 }
@@ -117,6 +123,7 @@ func (w *EventWorker) Do() {
 			w.logCollect.EventLog(e)
 			w.prometheusCollect.Collecting(e)
 			w.sendCollect.Send(e)
+			w.elasticSearchCollect.Collecting(e)
 		case <-w.stopCh:
 			return
 		}
