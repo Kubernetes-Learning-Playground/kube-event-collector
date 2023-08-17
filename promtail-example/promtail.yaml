@@ -1,0 +1,23 @@
+server:
+  disable: true
+
+clients:
+  - url: {loki_api}
+    tenant_id: {tenant_id}
+    external_labels:
+      host_ip: {host_ip}
+      nodename: {hostname}
+
+positions:
+  filename: /etc/promtail/positions.yaml
+
+target_config:
+  sync_period: 10s
+
+scrape_configs:
+  - job_name: file-logs
+    file_sd_configs:
+      - files:
+          - /etc/promtail/file_path_*.yaml
+    pipeline_stages:
+    relabel_configs:

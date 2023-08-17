@@ -1,0 +1,14 @@
+- targets: [localhost]
+  labels:
+    __path__: /var/log/messages
+    group: system
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/syslog
+    group: system
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/kern.log
+    group: system

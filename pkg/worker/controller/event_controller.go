@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/practice/kube-event/pkg/components/elasticsearchCollector"
 	"github.com/practice/kube-event/pkg/components/logCollector"
 	"github.com/practice/kube-event/pkg/components/prometheusCollector"
@@ -40,15 +41,27 @@ type EventWorker struct {
 
 func NewWorker(stopCh <-chan struct{}, cfg *config.Config) *EventWorker {
 	w := &EventWorker{
-		Events:            make(chan *model.Event, 1000),
-		stopCh:            stopCh,
-		config:            cfg,
-		prometheusCollect: prometheusCollector.MetricsCollector,
-		logCollect:        logCollector.Logger,
-		sendCollect:       sender.NewSender(cfg),
-		elasticSearchCollect: elasticsearchCollector.NewElasticSearchCollector(cfg),
+		Events: make(chan *model.Event, 1000),
+		stopCh: stopCh,
+		config: cfg,
 	}
+	w.setMode(cfg)
 	return w
+}
+
+func (w *EventWorker) setMode(cfg *config.Config) {
+	if cfg.Mode.Log {
+		w.logCollect = logCollector.NewStructLogger(cfg.LogFilePath)
+	}
+	if cfg.Mode.Prometheus {
+		w.prometheusCollect = prometheusCollector.MetricsCollector
+	}
+	if cfg.Mode.Message {
+		w.sendCollect = sender.NewSender(cfg)
+	}
+	if cfg.Mode.ElasticSearch {
+		w.elasticSearchCollect = elasticsearchCollector.NewElasticSearchCollector(cfg)
+	}
 }
 
 // initClient 初始化k8s client
@@ -57,7 +70,7 @@ func (w *EventWorker) initClient() error {
 	if err != nil {
 		return err
 	}
-	cfg.Insecure = true
+	//cfg.Insecure = true
 	clientSet, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
 		return err
@@ -96,7 +109,7 @@ func (w *EventWorker) Run() {
 func (w *EventWorker) eventAddHandle(obj interface{}) {
 	// watch add-event, and update events ---> Worker events
 	event := obj.(*v1.Event)
-	klog.Infof("event: %s, type: , reason: %s", event.Name, event.Type, event.Reason)
+	klog.Infof("event: %s, type: %s, reason: %s", event.Name, event.Type, event.Reason)
 	var eventTmp model.Event
 	eventTmp.Type = event.Type
 	eventTmp.Kind = event.Regarding.Kind
@@ -120,10 +133,27 @@ func (w *EventWorker) Do() {
 		select {
 		case e := <-w.Events:
 			// 从chan 获取event对象，并执行操作
-			w.logCollect.EventLog(e)
-			w.prometheusCollect.Collecting(e)
-			w.sendCollect.Send(e)
-			w.elasticSearchCollect.Collecting(e)
+
+			// 代码写法很丑，可优化，不过能先使用
+			if w.config.Mode.Log {
+				w.logCollect.EventLog(e)
+			}
+			if w.config.Mode.Prometheus {
+				w.prometheusCollect.Collecting(e)
+			}
+			if w.config.Mode.Message {
+				w.sendCollect.Send(e)
+			}
+			if w.config.Mode.ElasticSearch {
+				// FIXME: 使用goroutine是因为此接口返回很慢
+				go func() {
+					err := w.elasticSearchCollect.Collecting(e)
+					if err != nil {
+						fmt.Println("elasticSearchCollect error: ", err)
+					}
+				}()
+			}
+
 		case <-w.stopCh:
 			return
 		}

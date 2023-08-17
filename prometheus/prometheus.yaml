@@ -1,0 +1,40 @@
+# my global config
+global:
+  # 指定抓取指标的时间间隔
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  # 指定评估规则的时间间隔
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+  # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'my-app'
+
+# Load and evaluate rules in this file every 'evaluation_interval' seconds.
+# 规则文件，用于指定 Prometheus 使用的规则文件的路径。
+# 在示例中，使用了一个名为 alert.rules 的规则文件。
+rule_files:
+# - "alert.rules"
+# - "first.rules"
+# - "second.rules"
+
+# 告警配置，用于配置告警管理器的地址。
+alerting:
+#  alertmanagers:
+#    - static_configs:
+#        - targets: [ 'localhost:9093' ]  # Alertmanager 的地址
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+# 抓取配置，用于定义需要抓取的目标服务和相关参数。
+# 在示例中，有两个抓取任务，分别是 example-job 和 node-exporter。
+# 每个抓取任务可以包含多个目标，指定目标的地址。
+scrape_configs:
+  # 抓取任务的名称
+  - job_name: server-prometheus-test
+    scrape_interval: 10s
+    static_configs:
+      # 目标服务的地址
+      - targets:
+          - host.docker.internal:8080 # docker 部署，ip使用host.docker.internal

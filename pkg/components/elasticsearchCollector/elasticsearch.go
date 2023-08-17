@@ -4,15 +4,13 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/practice/kube-event/pkg/config"
 	"github.com/practice/kube-event/pkg/model"
+	"k8s.io/klog/v2"
 	"log"
 )
-
-
 
 // ElasticSearchCollector es收集器
 type ElasticSearchCollector struct {
@@ -29,7 +27,6 @@ func NewElasticSearchCollector(config *config.Config) *ElasticSearchCollector {
 	}
 }
 
-
 func initElasticSearch(endpoint string) (*elasticsearch.Client, error) {
 	var err error
 	var es *elasticsearch.Client
@@ -45,10 +42,10 @@ func initElasticSearch(endpoint string) (*elasticsearch.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	_, err = es.Info()
-	if err != nil {
-		panic(err.Error())
-	}
+	//_, err = es.Info()
+	//if err != nil {
+	//	panic(err.Error())
+	//}
 	return es, nil
 }
 
@@ -70,6 +67,6 @@ func (ec *ElasticSearchCollector) Collecting(event *model.Event) error {
 		return err
 	}
 	defer res.Body.Close()
-	fmt.Printf("插入数据完成  %s\n", event.Name)
+	klog.Infof("插入数据完成  %s\n", event.Name)
 	return nil
 }

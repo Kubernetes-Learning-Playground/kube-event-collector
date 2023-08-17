@@ -1,0 +1,52 @@
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+# 把loki当客户端连接，注意ip地址
+clients:
+  - url: http://localhost:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: application_logs
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: kube-event
+          __path__: /Users/zhenyu.jiang/go/src/golanglearning/new_project/kube-event-collector/event.log
+
+
+# 组件：
+# promtail： 日志收集的代理，安装部署在需要收集和分析日志的服务器，promtail会将日志发给Loki服务。
+# Loki： 主服务器，负责存储日志和处理查询。
+# Grafana：提供web管理界面，数据展示功能。
+
+# docker部署 promtail，注意目录挂载！
+# docker run -d \
+# --name promtail \
+# --privileged=true \
+# -p 9080:9080 \
+# -v /Users/bytedance/promtail:/mnt/config \
+# -v /Users/bytedance/event:/mylog/log \
+# grafana/promtail:2.1.0 -config.file=/mnt/config/promtail-config.yaml
+
+# 二进制部署 promtail
+# ./promtail -config.file=/Users/bytedance/promtail/promtail-config.yaml
+# https://github.com/grafana/loki/releases?q=promtail&expanded=true
+# https://docs.youdianzhishi.com/k8s/logging/loki/promtail/
+
+# docker 部署loki
+# docker run -d \
+# --name loki \
+# --privileged=true \
+# -v /Users/zhenyu.jiang/go/src/golanglearning/new_project/loki:/mnt/config \
+# -v /Users/zhenyu.jiang/go/src/golanglearning/new_project/loki/index:/opt/loki/index \
+# -v /Users/zhenyu.jiang/go/src/golanglearning/new_project/loki/chunks:/opt/loki/chunks \
+# -p 3100:3100 \
+# grafana/loki:2.1.0 \
+# -config.file=/mnt/config/loki-config.yaml
+
+# https://blog.csdn.net/qq_30442207/article/details/114583870

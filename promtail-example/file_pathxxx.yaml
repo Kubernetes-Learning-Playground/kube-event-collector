@@ -1,0 +1,41 @@
+- targets: [localhost]
+  labels:
+    __path__: /var/log/mentos/mentos
+    component: mentos
+    group: clb
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/gobgp/gobgp-ebgp.log
+    component: ebgp
+    group: clb
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/neutron/df-lbaas-controller.log
+    component: df-lbaas-controller
+    group: clb
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/beid/lb_minion
+    component: beid-lb-minion
+    group: clb
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/lb-monitor/install.log
+    component: lb-monitor
+    group: clb
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/lb-monitor/lb-monitor.log
+    component: lb-monitor
+    group: clb
+
+- targets: [localhost]
+  labels:
+    __path__: /var/log/lb-monitor/telegraf/telegraf.log
+    component: lb-monitor
+    group: clb

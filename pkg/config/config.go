@@ -9,17 +9,18 @@ import (
 
 // Config 配置文件
 type Config struct {
-	KubeConfig  string `json:"kubeConfig" yaml:"kubeConfig"`
-	FilterLevel string `json:"filterEventLevel" yaml:"filterEventLevel"`
+	KubeConfig            string `json:"kubeConfig" yaml:"kubeConfig"`
+	FilterLevel           string `json:"filterEventLevel" yaml:"filterEventLevel"`
 	ElasticSearchEndpoint string `json:"elasticSearchEndpoint" yaml:"elasticSearchEndpoint"`
+	LogFilePath			  string `json:"logFilePath" yaml:"logFilePath"`
 	Mode
 	Sender `json:"sender" yaml:"sender"`
 }
 
 type Mode struct {
-	Log        bool `json:"log" yaml:"log"`
-	Prometheus bool `json:"prometheus", yaml:"prometheus"`
-	Message    bool `json:"message" yaml:"message"`
+	Log           bool `json:"log" yaml:"log"`
+	Prometheus    bool `json:"prometheus" yaml:"prometheus"`
+	Message       bool `json:"message" yaml:"message"`
 	ElasticSearch bool `json:"elasticSearch" yaml:"elasticSearch"`
 }
 
@@ -54,7 +55,7 @@ func LoadConfig(path string) (*Config, error) {
 		}
 		return config, err
 	} else {
-		return nil, fmt.Errorf("load config file error...")
+		return nil, fmt.Errorf("load config file error")
 	}
 
 }

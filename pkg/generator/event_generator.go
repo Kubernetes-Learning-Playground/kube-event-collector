@@ -80,6 +80,7 @@ func (g *EventGenerator) Run() error {
 	}
 
 	cfg, err := clientcmd.BuildConfigFromFlags("", g.kubeConfig)
+	//cfg.Insecure = true
 	if err != nil {
 		return err
 	}
