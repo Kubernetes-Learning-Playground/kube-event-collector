@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/antonfisher/nested-logrus-formatter v1.3.1
-	github.com/elastic/go-elasticsearch/v8 v8.9.0
+	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-yaml/yaml v2.1.0+incompatible
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
@@ -26,7 +26,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/elastic/elastic-transport-go/v8 v8.0.0-20230329154755-1a3c63de0db6 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
 	github.com/fastly/go-utils v0.0.0-20180712184237-d95a45783239 // indirect
@@ -68,6 +67,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/olivere/elastic/v7 v7.0.32 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pkg/errors v0.9.1 // indirect

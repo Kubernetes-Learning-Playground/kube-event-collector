@@ -1,4 +1,6 @@
+config
 config1
+*.log
 # Binaries for programs and plugins
 *.exe
 *.exe~

@@ -1,11 +1,9 @@
 package elasticsearchCollector
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/olivere/elastic/v7"
 	"github.com/practice/kube-event/pkg/config"
 	"github.com/practice/kube-event/pkg/model"
 	"k8s.io/klog/v2"
@@ -14,7 +12,7 @@ import (
 
 // ElasticSearchCollector es收集器
 type ElasticSearchCollector struct {
-	EsClient *elasticsearch.Client
+	EsClient *elastic.Client
 }
 
 func NewElasticSearchCollector(config *config.Config) *ElasticSearchCollector {
@@ -27,25 +25,21 @@ func NewElasticSearchCollector(config *config.Config) *ElasticSearchCollector {
 	}
 }
 
-func initElasticSearch(endpoint string) (*elasticsearch.Client, error) {
-	var err error
-	var es *elasticsearch.Client
-	cfg := elasticsearch.Config{
-		Addresses: []string{
-			endpoint,
-		},
-		//Username: eventFlag.UserName,
-		//Password: eventFlag.Password,
-		//		CACert: cert,
-	}
-	es, err = elasticsearch.NewClient(cfg)
+func initElasticSearch(endpoint string) (*elastic.Client, error) {
+
+	es, err := elastic.NewClient(
+		elastic.SetURL(endpoint),
+		elastic.SetSniff(false),
+	)
 	if err != nil {
 		return nil, err
 	}
-	//_, err = es.Info()
-	//if err != nil {
-	//	panic(err.Error())
-	//}
+
+	_, _, err = es.Ping(endpoint).Do(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
 	return es, nil
 }
 
@@ -55,18 +49,11 @@ func (ec *ElasticSearchCollector) Collecting(event *model.Event) error {
 		log.Fatalf("Error marshaling document: %s", err)
 		return err
 	}
-	req := esapi.IndexRequest{
-		Index:      "event",
-		DocumentID: event.Name,
-		Body:       bytes.NewReader(data),
-		Refresh:    "true",
-	}
-	res, err := req.Do(context.Background(), ec.EsClient)
-	if err != nil {
-		log.Fatalf("Error getting response: %s", err)
-		return err
-	}
-	defer res.Body.Close()
-	klog.Infof("插入数据完成  %s\n", event.Name)
+
+	d, err := ec.EsClient.Index().Index("events").
+		Id("").BodyString(string(data)).Do(context.Background())
+
+	klog.Infof("插入数据完成  %v\n", d.Id)
+
 	return nil
 }

@@ -24,6 +24,8 @@ scrape_configs:
 # Loki： 主服务器，负责存储日志和处理查询。
 # Grafana：提供web管理界面，数据展示功能。
 
+# 二进制部署 ./promtail-arm -config.file=/Users/zhenyu.jiang/go/src/golanglearning/new_project/kube-event-collector/loki/promtail.yaml
+
 # docker部署 promtail，注意目录挂载！
 # docker run -d \
 # --name promtail \
@@ -39,6 +41,7 @@ scrape_configs:
 # https://docs.youdianzhishi.com/k8s/logging/loki/promtail/
 
 # docker 部署loki
+# 必须先建立 index chunks目录 mkdir -p xxx/index, mkdir -p xxx/chunks
 # docker run -d \
 # --name loki \
 # --privileged=true \
